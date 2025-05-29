@@ -5,3 +5,6 @@
 - Wie gehen tool calls über die API?
 - Wie zuverlässig ist das Analyse-Ergebnis?
 - Welchen Output möchte ich haben?
+
+# Ressources
+- See API usage dashboard: https://platform.openai.com/usage
