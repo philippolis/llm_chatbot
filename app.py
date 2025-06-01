@@ -5,6 +5,7 @@ from openai import OpenAI
 import streamlit as st
 import pandas as pd
 from langchain_openai import OpenAI
+import matplotlib.pyplot as plt
 
 df = pd.read_csv(
     "https://raw.githubusercontent.com/pandas-dev/pandas/main/doc/data/titanic.csv"
@@ -45,6 +46,14 @@ if prompt := st.chat_input("How many rows are there?"):
         # Extract the response text from the API response object
         # Based on OpenAI cookbook examples for the Responses API
         response_content = api_response['output']
+        
+        # Attempt to display matplotlib plot if one was generated
+        fig = plt.gcf() # Get current figure
+        # Check if the figure actually contains something (e.g., has axes)
+        if fig and fig.get_axes():
+            st.pyplot(fig)
+            plt.clf()  # Clear the current figure to prevent it from being re-used
+            plt.close(fig) # Close the figure object to release memory
         
         st.markdown(response_content)
 
