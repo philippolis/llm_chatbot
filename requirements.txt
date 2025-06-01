@@ -4,3 +4,4 @@ langchain_openai
 langchain
 langchain-experimental
 pandas
+tabulate
