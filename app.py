@@ -1,12 +1,27 @@
+from langchain.agents.agent_types import AgentType
+from langchain_experimental.agents.agent_toolkits import create_pandas_dataframe_agent
+from langchain_openai import ChatOpenAI
 from openai import OpenAI
 import streamlit as st
+import pandas as pd
+from langchain_openai import OpenAI
+
+df = pd.read_csv(
+    "https://raw.githubusercontent.com/pandas-dev/pandas/main/doc/data/titanic.csv"
+)
 
 st.title("ChatGPT-like clone")
 
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-
 if "openai_model" not in st.session_state:
     st.session_state["openai_model"] = "gpt-4.1-nano"
+
+agent = create_pandas_dataframe_agent(
+    ChatOpenAI(temperature=0, model=st.session_state["openai_model"]),
+    df,
+    verbose=True,
+    agent_type=AgentType.OPENAI_FUNCTIONS,
+    allow_dangerous_code=True
+)
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -18,28 +33,18 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-if prompt := st.chat_input("What is up?"):
+if prompt := st.chat_input("How many rows are there?"):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
     with st.chat_message("assistant"):
-        api_params = {
-            "model": st.session_state["openai_model"],
-            "input": prompt,
-        }
-        if st.session_state.last_response_id:
-            api_params["previous_response_id"] = st.session_state.last_response_id
-
         # Call the Responses API
-        api_response = client.responses.create(**api_params)
+        api_response = agent.invoke(prompt)
 
         # Extract the response text from the API response object
         # Based on OpenAI cookbook examples for the Responses API
-        response_content = api_response.output_text
-
-        # Update the last_response_id for the next turn
-        st.session_state.last_response_id = api_response.id
+        response_content = api_response['output']
         
         st.markdown(response_content)
 
