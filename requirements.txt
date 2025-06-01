@@ -1,2 +1,4 @@
 openai==1.76.2
 streamlit 
+langchain_openai
+langchain
