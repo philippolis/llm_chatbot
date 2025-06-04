@@ -43,7 +43,7 @@ def format_verbose_output(verbose_str: str, final_agent_answer_str: str) -> str:
                 # .decode('unicode_escape') handles things like \n within the code string literal itself
                 code_to_execute = query_extract_match.group(1).encode('utf-8').decode('unicode_escape', 'ignore')
 
-        formatted_parts.append(f"**Code Executed (by `python_repl_ast`):**\n```python\n{code_to_execute.strip()}\n```")
+        formatted_parts.append(f"**Code Executed:**\n```python\n{code_to_execute.strip()}\n```")
 
         # Determine the text block that contains the observation and potentially the final answer.
         # This block is after the invocation and before the "> Finished chain." marker.
@@ -98,12 +98,25 @@ if "last_response_id" not in st.session_state:
 
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+        if message["role"] == "assistant":
+            if "verbose_output" in message and message["verbose_output"]:
+                st.markdown(message["verbose_output"])
+            if "plot" in message and message["plot"]:
+                st.image(message["plot"])
+            if "content" in message and message["content"]:
+                st.markdown("**Answer:**")
+                st.markdown(message["content"])
+        else: # User message
+            st.markdown(message["content"])
 
 if prompt := st.chat_input("How many rows are there?"):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
+
+    assistant_response_content = ""
+    plot_bytes_for_this_message = None
+    verbose_output_for_this_message = None # ADDED: To store verbose output for current message
 
     with st.chat_message("assistant"):
         # Capture stdout for agent's verbose output
@@ -119,24 +132,39 @@ if prompt := st.chat_input("How many rows are there?"):
 
         # Extract the final response text from the API response object
         response_content = api_response['output']
+        assistant_response_content = response_content # Store for adding to history later
         
         # Display Agent's verbose output (if any)
         if verbose_agent_output:
             formatted_verbose_output = format_verbose_output(verbose_agent_output, response_content)
-            st.markdown(formatted_verbose_output) # Use st.markdown for the formatted output
+            if formatted_verbose_output: # Check if there's actually anything to display
+                st.markdown(formatted_verbose_output)
+                verbose_output_for_this_message = formatted_verbose_output # Store for history
 
-        # Attempt to display matplotlib plot if one was generated
+        # Attempt to capture and display matplotlib plot if one was generated
         with _lock:
             fig = plt.gcf() # Get current figure
             # Check if the figure actually contains something (e.g., has axes)
             if fig and fig.get_axes():
-                st.pyplot(fig)
+                img_buffer = io.BytesIO()
+                fig.savefig(img_buffer, format="png")
+                img_buffer.seek(0)
+                plot_bytes_for_this_message = img_buffer.getvalue() # Store bytes
+                
+                st.image(plot_bytes_for_this_message) # Display current plot immediately
+                
                 plt.clf()  # Clear the current figure to prevent it from being re-used
                 plt.close(fig) # Close the figure object to release memory
         
         # Display the final answer from the agent
-        st.markdown("**Answer:**")
-        st.markdown(response_content)
+        if response_content: # Check if there's actual text content to display
+            st.markdown("**Answer:**")
+            st.markdown(response_content)
 
-    # Add assistant's final response to chat history
-    st.session_state.messages.append({"role": "assistant", "content": response_content})
+    # Add assistant's response (and plot, if any) to chat history
+    assistant_message_data = {"role": "assistant", "content": assistant_response_content}
+    if verbose_output_for_this_message:
+        assistant_message_data["verbose_output"] = verbose_output_for_this_message
+    if plot_bytes_for_this_message:
+        assistant_message_data["plot"] = plot_bytes_for_this_message
+    st.session_state.messages.append(assistant_message_data)
