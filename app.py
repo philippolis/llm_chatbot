@@ -77,7 +77,7 @@ df = pd.read_csv(
     "https://raw.githubusercontent.com/pandas-dev/pandas/main/doc/data/titanic.csv"
 )
 
-st.title("ChatGPT-like clone")
+st.title("Chatbot für Datenanalyse")
 
 if "openai_model" not in st.session_state:
     st.session_state["openai_model"] = "gpt-4.1-nano"
