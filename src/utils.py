@@ -2,6 +2,7 @@ import re
 import ast
 import io
 from threading import RLock
+import seaborn as sns
 import matplotlib.pyplot as plt
 import streamlit as st
 

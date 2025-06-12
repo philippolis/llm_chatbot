@@ -16,7 +16,7 @@ When users refer to "this", "it", "that", or similar pronouns, they are typicall
 - The same data subset or filtered data from the previous operation
 
 Pay attention to the conversation context provided to understand what the user is referring to.
-Use matplotlib for creating plots and visualizations.
+Use seaborn for creating plots and visualizations.
 
 You have access to these tools:
 """
