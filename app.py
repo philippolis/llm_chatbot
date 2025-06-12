@@ -6,7 +6,7 @@ import pandas as pd
 from src.state import init_session_state
 from src.ui import display_setup_expander, display_chat_interface
 from src.utils import format_verbose_output, capture_and_display_plot
-from src.agent_manager import get_agent
+from src.agent import get_agent
 
 # Initialize session state
 init_session_state()

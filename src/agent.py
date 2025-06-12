@@ -3,67 +3,36 @@ from langchain_experimental.agents.agent_toolkits import create_pandas_dataframe
 from langchain_openai import ChatOpenAI
 import streamlit as st
 import pandas as pd
+import os
+
+def load_prompt(include_visualisations: bool = True, simple_language: bool = False):
+    """Load the appropriate prompt from text files based on configuration."""
+    
+    # Determine the filename based on parameters
+    if simple_language and include_visualisations:
+        filename = "easy_language_incl_viz.txt"
+    elif simple_language and not include_visualisations:
+        filename = "easy_language_no_viz.txt"
+    elif not simple_language and include_visualisations:
+        filename = "hard_language_incl_viz.txt"
+    else:  # not simple_language and not include_visualisations
+        filename = "hard_language_no_viz.txt"
+    
+    # Load the prompt from file
+    prompt_path = os.path.join("prompts", filename)
+    
+    try:
+        with open(prompt_path, 'r', encoding='utf-8') as file:
+            return file.read().strip()
+    except FileNotFoundError:
+        # Fallback to basic prompt if file not found
+        return "You are a helpful data analysis assistant. You have access to these tools:"
 
 def create_agent(df: pd.DataFrame, include_visualisations: bool = True, simple_language: bool = False):
     """Create a Pandas DataFrame agent with improved context understanding."""
     
-    # Custom prefix to help the agent understand context and references
-    prefix = """
-You are a helpful data analysis assistant working with a pandas dataframe named `df`. 
-When users refer to "this", "it", "that", or similar pronouns, they are typically referring to:
-- The data or results from their previous question
-- A specific column, chart, or analysis they mentioned earlier
-- The same data subset or filtered data from the previous operation
-
-Pay attention to the conversation context provided to understand what the user is referring to.
-
-Please use your common sense to explain how the findings can be understood or when the user might misunderstand the data.
-
-If the user's prompt doesn't resemble a question or command related to data analysis (e.g., "Testing this", "Hello", or other non-analytical input), respond with a helpful list of things they could do with the data, such as:
-- Explore the dataset structure and basic information
-- Calculate summary statistics
-- Create visualizations and charts
-- Filter and analyze specific subsets
-- Compare different groups or categories
-- Identify trends and patterns
-- Generate insights and recommendations
-"""
-
-    if simple_language:
-        prefix += """
-\nAfter your code execution, explain your findings in extremely simple German sentences like so:
-	•	Verwende kurze, einfache Sätze.
-	•	Nutze nur gebräuchliche Wörter; vermeide Fremdwörter und Fachbegriffe.
-	•	Erkläre schwierige Begriffe, falls sie notwendig sind.
-	•	Verzichte auf komplizierte Grammatik (z. B. keine verschachtelten Sätze).
-	•	Verwende klare, direkte Aussagen.
-	•	Vermeide unnötige Details und Ausschmückungen.
-	•	Schreibe in der aktiven Form, nicht in der Passivform.
-	•	Verwende Beispiele, wenn sie das Verständnis erleichtern.
-	•	Halte die Informationen übersichtlich und logisch geordnet.
-"""
-
-    if include_visualisations:
-        prefix += """
-Choose the most appropriate response format based on the user's question:
-- **Single number/statistic**: For questions asking for counts, averages, totals, percentages, or specific calculated values
-- **Markdown table**: For questions requesting comparisons, summaries, grouped data, or when showing multiple related values
-- **Seaborn plot**: For questions about trends, distributions, relationships, patterns, or when visual representation would be most informative
-
-Use seaborn for creating plots and visualizations. The plot is being shown as a streamlit component, so you don't have to include it in your answer.
-
-Always consider which format would best answer the user's specific question.
-"""
-    else:
-        prefix += """
-Choose the most appropriate response format based on the user's question:
-- **Single number/statistic**: For questions asking for counts, averages, totals, percentages, or specific calculated values
-- **Markdown table**: For questions requesting comparisons, summaries, grouped data, or when showing multiple related values
-
-Do not create plots or visualizations. Provide answers in text or markdown tables.
-"""
-    prefix += "\nAntworte auf Deutsch."
-    prefix += "\nYou have access to these tools:"
+    # Load the appropriate prompt from external file
+    prefix = load_prompt(include_visualisations, simple_language)
     
     return create_pandas_dataframe_agent(
         ChatOpenAI(temperature=0, model=st.session_state["openai_model"]),
@@ -72,4 +41,44 @@ Do not create plots or visualizations. Provide answers in text or markdown table
         agent_type=AgentType.OPENAI_FUNCTIONS,
         allow_dangerous_code=True,
         prefix=prefix
-    ) 
+    )
+
+def get_agent():
+    """
+    Retrieves or creates the agent. If accessibility settings have changed,
+    it recreates the agent.
+    """
+    df = st.session_state.get("df")
+    if df is None:
+        return None
+
+    agent = st.session_state.get("agent")
+    
+    # Get current settings from session state
+    include_visualisations = st.session_state.get("include_visualisations", True)
+    simple_language = st.session_state.get("simple_language", False)
+
+    # Get settings stored with the agent, if they exist
+    agent_settings = st.session_state.get("agent_settings", {})
+    
+    # Check if settings have changed or if agent does not exist
+    if (agent is None or
+        agent_settings.get("include_visualisations") != include_visualisations or
+        agent_settings.get("simple_language") != simple_language):
+        
+        # Store the new settings
+        new_settings = {
+            "include_visualisations": include_visualisations,
+            "simple_language": simple_language
+        }
+        st.session_state.agent_settings = new_settings
+        
+        # Create a new agent
+        agent = create_agent(
+            df,
+            include_visualisations=include_visualisations,
+            simple_language=simple_language
+        )
+        st.session_state.agent = agent
+        
+    return agent 

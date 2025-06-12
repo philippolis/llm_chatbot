@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from src.agent_manager import get_agent
+from src.agent import get_agent
 
 def display_setup_expander():
     # The expander will now be open by default.
