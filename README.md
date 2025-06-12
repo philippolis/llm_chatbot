@@ -1,6 +1,10 @@
 # Next steps
-- Filterfragen voranstellen
 - Chatbot sollte Nachrichten-Verlauf kennen
+- Systemprompt verändern
+    - "nutze Matplotlib"
+- Filterfragen voranstellen
+    - Systemprompt je nach Filterfrage anpassen
+
 
 # Ressources
 - See API usage dashboard: https://platform.openai.com/usage
