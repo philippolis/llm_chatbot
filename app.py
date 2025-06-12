@@ -33,7 +33,23 @@ else:
                 sys.stdout = captured_output_buffer = io.StringIO()
                 
                 try:
-                    api_response = st.session_state.agent.invoke(prompt)
+                    # Build conversation context from previous messages for better context awareness
+                    conversation_context = ""
+                    if st.session_state.messages:
+                        conversation_context = "\n\nPrevious conversation context:\n"
+                        # Only include the last 3-4 exchanges to avoid token limit issues
+                        recent_messages = st.session_state.messages[-6:]  # Last 3 user-assistant pairs
+                        for msg in recent_messages:
+                            if msg["role"] == "user":
+                                conversation_context += f"User: {msg['content']}\n"
+                            elif msg["role"] == "assistant":
+                                conversation_context += f"Assistant: {msg['content']}\n"
+                        conversation_context += "\nCurrent question:\n"
+                    
+                    # Add context to the current prompt
+                    enhanced_prompt = f"{conversation_context}{prompt}"
+                    
+                    api_response = st.session_state.agent.invoke(enhanced_prompt)
                     sys.stdout = old_stdout # Restore stdout
                     verbose_agent_output = captured_output_buffer.getvalue()
                     
