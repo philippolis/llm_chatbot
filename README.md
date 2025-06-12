@@ -1,9 +1,5 @@
 # Next steps
-- Chatbot sollte Nachrichten-Verlauf kennen
-- Systemprompt verändern
-    - "nutze Matplotlib"
-- Filterfragen voranstellen
-    - Systemprompt je nach Filterfrage anpassen
+- Tastaturnavigation verbessern
 
 
 # Ressources
