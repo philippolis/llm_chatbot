@@ -26,7 +26,6 @@ if st.session_state.agent is None:
                 simple_language=st.session_state.simple_language
             )
             st.session_state.data_source_locked = True
-            st.session_state.accessibility_options_set = True
     except Exception as e:
         st.error(f"Failed to initialize default agent with Titanic dataset: {e}")
 

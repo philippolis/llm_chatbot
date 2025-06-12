@@ -2,19 +2,28 @@ import streamlit as st
 import pandas as pd
 from src.agent import create_agent
 
+def recreate_agent():
+    """Re-creates the agent with the latest accessibility settings."""
+    if st.session_state.df is not None:
+        st.session_state.agent = create_agent(
+            st.session_state.df,
+            include_visualisations=st.session_state.include_visualisations,
+            simple_language=st.session_state.simple_language
+        )
+
 def display_setup_expander():
     # The expander will now be open by default.
     with st.expander("⚙️ Settings and Data Source", expanded=True):
         st.header("Accessibility Options")
-        include_visualisations = st.toggle(
+        st.toggle(
             "Include visualisations in answers?", 
-            value=st.session_state.get("include_visualisations", True),
-            key="include_visualisations_toggle"
+            key="include_visualisations",
+            on_change=recreate_agent
         )
-        simple_language = st.toggle(
+        st.toggle(
             "Use simple language?", 
-            value=st.session_state.get("simple_language", False),
-            key="simple_language_toggle"
+            key="simple_language",
+            on_change=recreate_agent
         )
 
         st.header("Data Source")
@@ -41,21 +50,16 @@ def display_setup_expander():
                         st.rerun()
 
                 if submitted:
-                    st.session_state.include_visualisations = include_visualisations
-                    st.session_state.simple_language = simple_language
-                    st.session_state.accessibility_options_set = True
-
                     if uploaded_file_value is not None:
                         try:
                             current_df = pd.read_csv(uploaded_file_value)
                             st.session_state.df = current_df
                             st.session_state.data_source_name = uploaded_file_value.name
                             
-                            st.session_state.agent = create_agent(
-                                st.session_state.df,
-                                include_visualisations=st.session_state.include_visualisations,
-                                simple_language=st.session_state.simple_language
-                            )
+                            # Agent is now re-created on toggle change, but we still need to create it
+                            # when a new file is loaded.
+                            recreate_agent() 
+                            
                             st.session_state.data_source_locked = True
                             st.session_state.messages = []
                             st.session_state.show_csv_uploader = False
