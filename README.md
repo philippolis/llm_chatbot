@@ -1,5 +1,6 @@
 # Next steps
 - Filterfragen voranstellen
+- Chatbot sollte Nachrichten-Verlauf kennen
 
 # Ressources
 - See API usage dashboard: https://platform.openai.com/usage
