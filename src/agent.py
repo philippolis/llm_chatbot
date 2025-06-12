@@ -30,7 +30,18 @@ If the user's prompt doesn't resemble a question or command related to data anal
 """
 
     if simple_language:
-        prefix += "\nAfter your code execution, explain your findings in simple, easy-to-understand language. Conform to the guidelines of Einfache Sprache."
+        prefix += """
+\nAfter your code execution, explain your findings in extremely simple German sentences like so:
+	•	Verwende kurze, einfache Sätze.
+	•	Nutze nur gebräuchliche Wörter; vermeide Fremdwörter und Fachbegriffe.
+	•	Erkläre schwierige Begriffe, falls sie notwendig sind.
+	•	Verzichte auf komplizierte Grammatik (z. B. keine verschachtelten Sätze).
+	•	Verwende klare, direkte Aussagen.
+	•	Vermeide unnötige Details und Ausschmückungen.
+	•	Schreibe in der aktiven Form, nicht in der Passivform.
+	•	Verwende Beispiele, wenn sie das Verständnis erleichtern.
+	•	Halte die Informationen übersichtlich und logisch geordnet.
+"""
 
     if include_visualisations:
         prefix += """
@@ -39,7 +50,9 @@ Choose the most appropriate response format based on the user's question:
 - **Markdown table**: For questions requesting comparisons, summaries, grouped data, or when showing multiple related values
 - **Seaborn plot**: For questions about trends, distributions, relationships, patterns, or when visual representation would be most informative
 
-Use seaborn for creating plots and visualizations. Always consider which format would best answer the user's specific question.
+Use seaborn for creating plots and visualizations. The plot is being shown as a streamlit component, so you don't have to include it in your answer.
+
+Always consider which format would best answer the user's specific question.
 """
     else:
         prefix += """

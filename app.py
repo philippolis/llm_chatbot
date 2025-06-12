@@ -6,28 +6,22 @@ import pandas as pd
 from src.state import init_session_state
 from src.ui import display_setup_expander, display_chat_interface
 from src.utils import format_verbose_output, capture_and_display_plot
-from src.agent import create_agent
+from src.agent_manager import get_agent
 
 # Initialize session state
 init_session_state()
 
-# --- Default Agent Initialization ---
-if st.session_state.agent is None:
+# --- Default Dataset Loading ---
+if st.session_state.df is None:
     try:
-        with st.spinner("Lade Titanic-Datensatz und initialisiere Agent..."):
+        with st.spinner("Lade Titanic-Datensatz..."):
             titanic_url = "https://raw.githubusercontent.com/pandas-dev/pandas/main/doc/data/titanic.csv"
             default_df = pd.read_csv(titanic_url)
             st.session_state.df = default_df
-            
-            st.session_state.agent = create_agent(
-                default_df,
-                # Use default accessibility options
-                include_visualisations=st.session_state.include_visualisations,
-                simple_language=st.session_state.simple_language
-            )
+            st.session_state.data_source_name = "Titanic"
             st.session_state.data_source_locked = True
     except Exception as e:
-        st.error(f"Fehler beim Initialisieren des Standard-Agenten mit dem Titanic-Datensatz: {e}")
+        st.error(f"Fehler beim Laden des Titanic-Datensatzes: {e}")
 
 st.title("Chatbot für Datenanalyse")
 
@@ -36,8 +30,11 @@ display_setup_expander()
 
 display_chat_interface()
 
+# Get the agent, which will be created or recreated if necessary
+agent = get_agent()
+
 # Chat input and interaction logic
-if st.session_state.agent:
+if agent:
     if prompt := st.chat_input("Stellen Sie Fragen zu Ihren Daten..."):
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user"):
@@ -68,7 +65,7 @@ if st.session_state.agent:
                 # Add context to the current prompt
                 enhanced_prompt = f"{conversation_context}{prompt}"
                 
-                api_response = st.session_state.agent.invoke(enhanced_prompt)
+                api_response = agent.invoke(enhanced_prompt)
                 sys.stdout = old_stdout # Restore stdout
                 verbose_agent_output = captured_output_buffer.getvalue()
                 

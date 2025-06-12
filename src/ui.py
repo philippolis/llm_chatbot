@@ -1,15 +1,6 @@
 import streamlit as st
 import pandas as pd
-from src.agent import create_agent
-
-def recreate_agent():
-    """Re-creates the agent with the latest accessibility settings."""
-    if st.session_state.df is not None:
-        st.session_state.agent = create_agent(
-            st.session_state.df,
-            include_visualisations=st.session_state.include_visualisations,
-            simple_language=st.session_state.simple_language
-        )
+from src.agent_manager import get_agent
 
 def display_setup_expander():
     # The expander will now be open by default.
@@ -17,13 +8,11 @@ def display_setup_expander():
         st.header("Barrierefreiheitsoptionen")
         st.toggle(
             "Visualisierungen in Antworten einbeziehen?", 
-            key="include_visualisations",
-            on_change=recreate_agent
+            key="include_visualisations"
         )
         st.toggle(
             "Einfache Sprache verwenden?", 
-            key="simple_language",
-            on_change=recreate_agent
+            key="simple_language"
         )
 
         st.header("Datenquelle")
@@ -56,9 +45,9 @@ def display_setup_expander():
                             st.session_state.df = current_df
                             st.session_state.data_source_name = uploaded_file_value.name
                             
-                            # Agent is now re-created on toggle change, but we still need to create it
-                            # when a new file is loaded.
-                            recreate_agent() 
+                            # Force agent recreation on next get_agent() call
+                            st.session_state.agent = None
+                            st.session_state.agent_settings = {}
                             
                             st.session_state.data_source_locked = True
                             st.session_state.messages = []
