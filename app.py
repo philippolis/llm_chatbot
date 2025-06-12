@@ -5,7 +5,7 @@ import pandas as pd
 
 from src.state import init_session_state
 from src.ui import display_setup_expander, display_chat_interface
-from src.utils import format_verbose_output, capture_and_display_plot
+from src.utils import capture_and_display_plot
 from src.agent import get_agent
 
 # Initialize session state
@@ -72,13 +72,6 @@ if agent:
                 response_content = api_response.get('output', "Keine textliche Ausgabe vom Agenten.")
                 assistant_response_content = response_content
                 
-                if verbose_agent_output:
-                    formatted_verbose_output = format_verbose_output(verbose_agent_output, response_content)
-                    if formatted_verbose_output:
-                        with st.expander("🔍 Code anzeigen", expanded=False):
-                            st.markdown(formatted_verbose_output)
-                        verbose_output_for_this_message = formatted_verbose_output
-
                 if st.session_state.include_visualisations:
                     plot_bytes_for_this_message = capture_and_display_plot()
                 
@@ -91,8 +84,7 @@ if agent:
 
         # Add assistant's full response to chat history
         current_assistant_message = {"role": "assistant", "content": assistant_response_content}
-        if verbose_output_for_this_message:
-            current_assistant_message["verbose_output"] = verbose_output_for_this_message
+        
         if plot_bytes_for_this_message:
             current_assistant_message["plot"] = plot_bytes_for_this_message
         st.session_state.messages.append(current_assistant_message)
