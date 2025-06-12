@@ -16,7 +16,13 @@ When users refer to "this", "it", "that", or similar pronouns, they are typicall
 - The same data subset or filtered data from the previous operation
 
 Pay attention to the conversation context provided to understand what the user is referring to.
-Use seaborn for creating plots and visualizations.
+
+Choose the most appropriate response format based on the user's question:
+- **Single number/statistic**: For questions asking for counts, averages, totals, percentages, or specific calculated values
+- **Markdown table**: For questions requesting comparisons, summaries, grouped data, or when showing multiple related values
+- **Seaborn plot**: For questions about trends, distributions, relationships, patterns, or when visual representation would be most informative
+
+Use seaborn for creating plots and visualizations. Always consider which format would best answer the user's specific question.
 
 You have access to these tools:
 """
