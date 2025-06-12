@@ -54,7 +54,7 @@ if agent:
                 if st.session_state.messages:
                     conversation_context = "\n\nPrevious conversation context:\n"
                     # Only include the last 3-4 exchanges to avoid token limit issues
-                    recent_messages = st.session_state.messages[-6:]  # Last 3 user-assistant pairs
+                    recent_messages = st.session_state.messages[-2:]  # Last 1 user-assistant pair
                     for msg in recent_messages:
                         if msg["role"] == "user":
                             conversation_context += f"User: {msg['content']}\n"
