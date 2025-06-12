@@ -5,6 +5,12 @@ def init_session_state():
         st.session_state["openai_model"] = "gpt-4.1-nano" # Or your preferred model
     if 'data_source_locked' not in st.session_state:
         st.session_state.data_source_locked = False
+    if 'accessibility_options_set' not in st.session_state:
+        st.session_state.accessibility_options_set = False
+    if 'include_visualisations' not in st.session_state:
+        st.session_state.include_visualisations = True
+    if 'simple_language' not in st.session_state:
+        st.session_state.simple_language = False
     if 'df' not in st.session_state:
         st.session_state.df = None
     if 'agent' not in st.session_state:

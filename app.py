@@ -3,14 +3,16 @@ import io
 import streamlit as st
 
 from src.state import init_session_state
-from src.ui import display_data_source_form, display_chat_interface
+from src.ui import display_data_source_form, display_chat_interface, display_accessibility_options_form
 from src.utils import format_verbose_output, capture_and_display_plot
 
 # Initialize session state
 init_session_state()
 
 # --- Main App Logic ---
-if not st.session_state.data_source_locked:
+if not st.session_state.accessibility_options_set:
+    display_accessibility_options_form()
+elif not st.session_state.data_source_locked:
     display_data_source_form()
 else:
     display_chat_interface()
@@ -63,7 +65,8 @@ else:
                                 st.markdown(formatted_verbose_output)
                             verbose_output_for_this_message = formatted_verbose_output
 
-                    plot_bytes_for_this_message = capture_and_display_plot()
+                    if st.session_state.include_visualisations:
+                        plot_bytes_for_this_message = capture_and_display_plot()
                     
                     if response_content: # Ensure content exists before marking it as "Answer"
                         st.markdown(response_content)

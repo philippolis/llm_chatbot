@@ -4,7 +4,7 @@ from langchain_openai import ChatOpenAI
 import streamlit as st
 import pandas as pd
 
-def create_agent(df: pd.DataFrame):
+def create_agent(df: pd.DataFrame, include_visualisations: bool = True, simple_language: bool = False):
     """Create a Pandas DataFrame agent with improved context understanding."""
     
     # Custom prefix to help the agent understand context and references
@@ -17,6 +17,8 @@ When users refer to "this", "it", "that", or similar pronouns, they are typicall
 
 Pay attention to the conversation context provided to understand what the user is referring to.
 
+Please use your common sense to explain how the findings can be understood or when the user might misunderstand the data.
+
 If the user's prompt doesn't resemble a question or command related to data analysis (e.g., "Testing this", "Hello", or other non-analytical input), respond with a helpful list of things they could do with the data, such as:
 - Explore the dataset structure and basic information
 - Calculate summary statistics
@@ -25,16 +27,30 @@ If the user's prompt doesn't resemble a question or command related to data anal
 - Compare different groups or categories
 - Identify trends and patterns
 - Generate insights and recommendations
+"""
 
+    if simple_language:
+        prefix += "\nAfter your code execution, explain your findings in simple, easy-to-understand language. Avoid jargon."
+
+    if include_visualisations:
+        prefix += """
 Choose the most appropriate response format based on the user's question:
 - **Single number/statistic**: For questions asking for counts, averages, totals, percentages, or specific calculated values
 - **Markdown table**: For questions requesting comparisons, summaries, grouped data, or when showing multiple related values
 - **Seaborn plot**: For questions about trends, distributions, relationships, patterns, or when visual representation would be most informative
 
 Use seaborn for creating plots and visualizations. Always consider which format would best answer the user's specific question.
-
-You have access to these tools:
 """
+    else:
+        prefix += """
+Choose the most appropriate response format based on the user's question:
+- **Single number/statistic**: For questions asking for counts, averages, totals, percentages, or specific calculated values
+- **Markdown table**: For questions requesting comparisons, summaries, grouped data, or when showing multiple related values
+
+Do not create plots or visualizations. Provide answers in text or markdown tables.
+"""
+
+    prefix += "\nYou have access to these tools:"
     
     return create_pandas_dataframe_agent(
         ChatOpenAI(temperature=0, model=st.session_state["openai_model"]),

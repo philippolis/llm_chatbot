@@ -2,6 +2,22 @@ import streamlit as st
 import pandas as pd
 from src.agent import create_agent
 
+def display_accessibility_options_form():
+    st.title("Accessibility Options")
+    st.write("To better tailor the experience, please select your preferences below.")
+
+    with st.form("accessibility_form"):
+        include_visualisations = st.toggle("Include visualisations?", value=st.session_state.get("include_visualisations", True))
+        simple_language = st.toggle("Use simple language?", value=st.session_state.get("simple_language", False))
+
+        submitted = st.form_submit_button("Save and Continue")
+
+        if submitted:
+            st.session_state.include_visualisations = include_visualisations
+            st.session_state.simple_language = simple_language
+            st.session_state.accessibility_options_set = True
+            st.rerun()
+
 def display_data_source_form():
     st.title("Chatbot Setup: Choose Your Data")
 
@@ -45,7 +61,11 @@ def display_data_source_form():
             
             if st.session_state.df is not None:
                 try:
-                    st.session_state.agent = create_agent(st.session_state.df)
+                    st.session_state.agent = create_agent(
+                        st.session_state.df,
+                        include_visualisations=st.session_state.include_visualisations,
+                        simple_language=st.session_state.simple_language
+                    )
                     st.session_state.data_source_locked = True
                     st.session_state.messages = [] # Clear previous messages for the new session
                     st.success("Chatbot initialized successfully!")
