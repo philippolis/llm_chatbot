@@ -65,11 +65,11 @@ def display_chat_interface():
         with st.chat_message(message["role"]):
             if message["role"] == "assistant":
                 if "verbose_output" in message and message["verbose_output"]:
-                    st.markdown(message["verbose_output"])
+                    with st.expander("🔍 View Code", expanded=False):
+                        st.markdown(message["verbose_output"])
                 if "plot" in message and message["plot"]:
                     st.image(message["plot"])
                 if "content" in message and message["content"]: # Ensure content exists
-                    st.markdown("**Answer:**")
                     st.markdown(message["content"])
             else: # User message
                 st.markdown(message["content"]) 

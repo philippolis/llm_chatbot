@@ -59,13 +59,13 @@ else:
                     if verbose_agent_output:
                         formatted_verbose_output = format_verbose_output(verbose_agent_output, response_content)
                         if formatted_verbose_output:
-                            st.markdown(formatted_verbose_output)
+                            with st.expander("🔍 View Code", expanded=False):
+                                st.markdown(formatted_verbose_output)
                             verbose_output_for_this_message = formatted_verbose_output
 
                     plot_bytes_for_this_message = capture_and_display_plot()
                     
                     if response_content: # Ensure content exists before marking it as "Answer"
-                        st.markdown("**Answer:**")
                         st.markdown(response_content)
 
                 except Exception as e:
