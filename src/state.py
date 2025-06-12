@@ -13,7 +13,7 @@ def init_session_state():
 
     # --- Configuration State ---
     if "openai_model" not in st.session_state:
-        st.session_state.openai_model = "gpt-4"
+        st.session_state.openai_model = "gpt-4.1-nano"
     if "data_source_locked" not in st.session_state:
         st.session_state.data_source_locked = False
         
