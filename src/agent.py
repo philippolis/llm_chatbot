@@ -49,7 +49,7 @@ Choose the most appropriate response format based on the user's question:
 
 Do not create plots or visualizations. Provide answers in text or markdown tables.
 """
-    prefix += "\nAlways print out relevant tables or numbers."
+    prefix += "\nAntworte auf Deutsch."
     prefix += "\nYou have access to these tools:"
     
     return create_pandas_dataframe_agent(
