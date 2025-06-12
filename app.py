@@ -14,7 +14,7 @@ init_session_state()
 # --- Default Agent Initialization ---
 if st.session_state.agent is None:
     try:
-        with st.spinner("Loading Titanic Dataset and Initializing Agent..."):
+        with st.spinner("Lade Titanic-Datensatz und initialisiere Agent..."):
             titanic_url = "https://raw.githubusercontent.com/pandas-dev/pandas/main/doc/data/titanic.csv"
             default_df = pd.read_csv(titanic_url)
             st.session_state.df = default_df
@@ -27,7 +27,7 @@ if st.session_state.agent is None:
             )
             st.session_state.data_source_locked = True
     except Exception as e:
-        st.error(f"Failed to initialize default agent with Titanic dataset: {e}")
+        st.error(f"Fehler beim Initialisieren des Standard-Agenten mit dem Titanic-Datensatz: {e}")
 
 st.title("Chatbot für Datenanalyse")
 
@@ -38,12 +38,12 @@ display_chat_interface()
 
 # Chat input and interaction logic
 if st.session_state.agent:
-    if prompt := st.chat_input("Ask questions about your data..."):
+    if prompt := st.chat_input("Stellen Sie Fragen zu Ihren Daten..."):
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user"):
             st.markdown(prompt)
 
-        assistant_response_content = "Sorry, I encountered an error and couldn't respond."
+        assistant_response_content = "Entschuldigung, ein Fehler ist aufgetreten und ich konnte nicht antworten."
         plot_bytes_for_this_message = None
         verbose_output_for_this_message = None
 
@@ -72,13 +72,13 @@ if st.session_state.agent:
                 sys.stdout = old_stdout # Restore stdout
                 verbose_agent_output = captured_output_buffer.getvalue()
                 
-                response_content = api_response.get('output', "No textual output from agent.")
+                response_content = api_response.get('output', "Keine textliche Ausgabe vom Agenten.")
                 assistant_response_content = response_content
                 
                 if verbose_agent_output:
                     formatted_verbose_output = format_verbose_output(verbose_agent_output, response_content)
                     if formatted_verbose_output:
-                        with st.expander("🔍 View Code", expanded=False):
+                        with st.expander("🔍 Code anzeigen", expanded=False):
                             st.markdown(formatted_verbose_output)
                         verbose_output_for_this_message = formatted_verbose_output
 
@@ -90,7 +90,7 @@ if st.session_state.agent:
 
             except Exception as e:
                 sys.stdout = old_stdout # Restore stdout in case of error during agent execution
-                st.error(f"Error during agent execution: {e}")
+                st.error(f"Fehler bei der Ausführung des Agenten: {e}")
 
         # Add assistant's full response to chat history
         current_assistant_message = {"role": "assistant", "content": assistant_response_content}
@@ -100,4 +100,4 @@ if st.session_state.agent:
             current_assistant_message["plot"] = plot_bytes_for_this_message
         st.session_state.messages.append(current_assistant_message)
 else:
-    st.info("Please configure the settings and load data to start the chatbot.")
+    st.info("Bitte konfigurieren Sie die Einstellungen und laden Sie Daten, um den Chatbot zu starten.")

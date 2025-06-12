@@ -27,4 +27,4 @@ def init_session_state():
     if 'show_csv_uploader' not in st.session_state:
         st.session_state.show_csv_uploader = False
     if 'data_source_name' not in st.session_state:
-        st.session_state.data_source_name = "Titanic Dataset" 
+        st.session_state.data_source_name = "Titanic-Datensatz" 

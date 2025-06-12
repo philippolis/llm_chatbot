@@ -30,7 +30,7 @@ If the user's prompt doesn't resemble a question or command related to data anal
 """
 
     if simple_language:
-        prefix += "\nAfter your code execution, explain your findings in simple, easy-to-understand language. Avoid jargon."
+        prefix += "\nAfter your code execution, explain your findings in simple, easy-to-understand language. Conform to the guidelines of Einfache Sprache."
 
     if include_visualisations:
         prefix += """

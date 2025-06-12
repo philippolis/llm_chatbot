@@ -13,39 +13,39 @@ def recreate_agent():
 
 def display_setup_expander():
     # The expander will now be open by default.
-    with st.expander("⚙️ Settings and Data Source", expanded=True):
-        st.header("Accessibility Options")
+    with st.expander("⚙️ Einstellungen und Datenquelle", expanded=True):
+        st.header("Barrierefreiheitsoptionen")
         st.toggle(
-            "Include visualisations in answers?", 
+            "Visualisierungen in Antworten einbeziehen?", 
             key="include_visualisations",
             on_change=recreate_agent
         )
         st.toggle(
-            "Use simple language?", 
+            "Einfache Sprache verwenden?", 
             key="simple_language",
             on_change=recreate_agent
         )
 
-        st.header("Data Source")
+        st.header("Datenquelle")
         
         if not st.session_state.show_csv_uploader:
-            st.info(f"Currently using: **{st.session_state.data_source_name}**.")
-            if st.button("Change dataset"):
+            st.info(f"Aktuell verwendet: **{st.session_state.data_source_name}**.")
+            if st.button("Datensatz ändern"):
                 st.session_state.show_csv_uploader = True
                 st.rerun()
         else:
             with st.form("data_source_form"):
                 uploaded_file_value = st.file_uploader(
-                    "Upload your CSV file", 
+                    "Laden Sie Ihre CSV-Datei hoch", 
                     type="csv", 
                     key="csv_uploader"
                 )
                 
                 col1, col2 = st.columns(2)
                 with col1:
-                    submitted = st.form_submit_button("Load CSV and Re-initialize")
+                    submitted = st.form_submit_button("CSV laden und neu initialisieren")
                 with col2:
-                    if st.form_submit_button("Cancel"):
+                    if st.form_submit_button("Abbrechen"):
                         st.session_state.show_csv_uploader = False
                         st.rerun()
 
@@ -63,12 +63,12 @@ def display_setup_expander():
                             st.session_state.data_source_locked = True
                             st.session_state.messages = []
                             st.session_state.show_csv_uploader = False
-                            st.success("Chatbot re-initialized with new data!")
+                            st.success("Chatbot mit neuen Daten neu initialisiert!")
                             st.rerun()
                         except Exception as e:
-                            st.error(f"Error processing CSV: {e}")
+                            st.error(f"Fehler beim Verarbeiten der CSV-Datei: {e}")
                     else:
-                        st.error("Please upload a CSV file.")
+                        st.error("Bitte laden Sie eine CSV-Datei hoch.")
 
 
 def display_chat_interface():
@@ -77,7 +77,7 @@ def display_chat_interface():
         with st.chat_message(message["role"]):
             if message["role"] == "assistant":
                 if "verbose_output" in message and message["verbose_output"]:
-                    with st.expander("🔍 View Code", expanded=False):
+                    with st.expander("🔍 Code anzeigen", expanded=False):
                         st.markdown(message["verbose_output"])
                 if "plot" in message and message["plot"]:
                     st.image(message["plot"])
