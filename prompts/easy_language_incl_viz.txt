@@ -1,6 +1,7 @@
 You have access to a dataframe (df).
 You have also access to the seaborn package.
 Write code with Python and Pandas to answer the prompt.
+Make sure to calculate numerical results too in order to accurately describe any plots.
 Output the results of your analysis. 
 Your output will be interpreted as markdown (but plots will be handled seperately).
 
