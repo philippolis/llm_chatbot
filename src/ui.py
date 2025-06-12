@@ -2,84 +2,72 @@ import streamlit as st
 import pandas as pd
 from src.agent import create_agent
 
-def display_accessibility_options_form():
-    st.title("Accessibility Options")
-    st.write("To better tailor the experience, please select your preferences below.")
-
-    with st.form("accessibility_form"):
-        include_visualisations = st.toggle("Include visualisations?", value=st.session_state.get("include_visualisations", True))
-        simple_language = st.toggle("Use simple language?", value=st.session_state.get("simple_language", False))
-
-        submitted = st.form_submit_button("Save and Continue")
-
-        if submitted:
-            st.session_state.include_visualisations = include_visualisations
-            st.session_state.simple_language = simple_language
-            st.session_state.accessibility_options_set = True
-            st.rerun()
-
-def display_data_source_form():
-    st.title("Chatbot Setup: Choose Your Data")
-
-    with st.form("data_source_form"):
-        data_source_choice = st.radio(
-            "How would you like to provide data?",
-            ("Use **Titanic dataset** as an example", "Upload a **CSV file**"),
-            key="data_source_radio"
+def display_setup_expander():
+    # The expander will now be open by default.
+    with st.expander("⚙️ Settings and Data Source", expanded=True):
+        st.header("Accessibility Options")
+        include_visualisations = st.toggle(
+            "Include visualisations in answers?", 
+            value=st.session_state.get("include_visualisations", True),
+            key="include_visualisations_toggle"
         )
+        simple_language = st.toggle(
+            "Use simple language?", 
+            value=st.session_state.get("simple_language", False),
+            key="simple_language_toggle"
+        )
+
+        st.header("Data Source")
         
-        uploaded_file_value = None
-        if data_source_choice == "Upload a **CSV file**":
-            uploaded_file_value = st.file_uploader("Upload your CSV file", type="csv", key="csv_uploader")
+        if not st.session_state.show_csv_uploader:
+            st.info(f"Currently using: **{st.session_state.data_source_name}**.")
+            if st.button("Change dataset"):
+                st.session_state.show_csv_uploader = True
+                st.rerun()
+        else:
+            with st.form("data_source_form"):
+                uploaded_file_value = st.file_uploader(
+                    "Upload your CSV file", 
+                    type="csv", 
+                    key="csv_uploader"
+                )
+                
+                col1, col2 = st.columns(2)
+                with col1:
+                    submitted = st.form_submit_button("Load CSV and Re-initialize")
+                with col2:
+                    if st.form_submit_button("Cancel"):
+                        st.session_state.show_csv_uploader = False
+                        st.rerun()
 
-        submitted = st.form_submit_button("Load Data and Initialize Chatbot")
+                if submitted:
+                    st.session_state.include_visualisations = include_visualisations
+                    st.session_state.simple_language = simple_language
+                    st.session_state.accessibility_options_set = True
 
-        if submitted:
-            current_df = None
-            if data_source_choice == "Use **Titanic dataset** as an example":
-                try:
-                    titanic_url = "https://raw.githubusercontent.com/pandas-dev/pandas/main/doc/data/titanic.csv"
-                    current_df = pd.read_csv(titanic_url)
-                    st.session_state.df = current_df
-                    st.success("Titanic dataset loaded successfully!")
-                except Exception as e:
-                    st.error(f"Error loading Titanic dataset: {e}")
-                    st.session_state.df = None
-            
-            elif data_source_choice == "Upload a **CSV file**":
-                if uploaded_file_value is not None:
-                    try:
-                        current_df = pd.read_csv(uploaded_file_value)
-                        st.session_state.df = current_df
-                        st.success("CSV file loaded and parsed successfully!")
-                    except Exception as e:
-                        st.error(f"Error reading or parsing uploaded CSV file: {e}")
-                        st.session_state.df = None
-                else:
-                    st.error("Please upload a CSV file if you choose that option.")
-                    st.session_state.df = None
-            
-            if st.session_state.df is not None:
-                try:
-                    st.session_state.agent = create_agent(
-                        st.session_state.df,
-                        include_visualisations=st.session_state.include_visualisations,
-                        simple_language=st.session_state.simple_language
-                    )
-                    st.session_state.data_source_locked = True
-                    st.session_state.messages = [] # Clear previous messages for the new session
-                    st.success("Chatbot initialized successfully!")
-                    st.rerun()
-                except Exception as e:
-                    st.error(f"Error creating chatbot agent: {e}")
-                    st.session_state.agent = None
-            else:
-                pass
+                    if uploaded_file_value is not None:
+                        try:
+                            current_df = pd.read_csv(uploaded_file_value)
+                            st.session_state.df = current_df
+                            st.session_state.data_source_name = uploaded_file_value.name
+                            
+                            st.session_state.agent = create_agent(
+                                st.session_state.df,
+                                include_visualisations=st.session_state.include_visualisations,
+                                simple_language=st.session_state.simple_language
+                            )
+                            st.session_state.data_source_locked = True
+                            st.session_state.messages = []
+                            st.session_state.show_csv_uploader = False
+                            st.success("Chatbot re-initialized with new data!")
+                            st.rerun()
+                        except Exception as e:
+                            st.error(f"Error processing CSV: {e}")
+                    else:
+                        st.error("Please upload a CSV file.")
 
 
 def display_chat_interface():
-    st.title("Chatbot für Datenanalyse")
-
     # Display chat messages from history
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
