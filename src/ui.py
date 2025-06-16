@@ -6,11 +6,18 @@ def display_setup_section():
     st.header("Barrierefreiheitsoptionen")
     st.toggle(
         "Visualisierungen in Antworten einbeziehen",
-        key="include_visualisations"
+        key="include_visualisations",
+        help="Wenn aktiviert, können Diagramme und Grafiken in den Antworten angezeigt werden."
     )
     st.toggle(
         "Einfache Sprache verwenden",
-        key="simple_language"
+        key="simple_language",
+        help="Wenn aktiviert, werden komplexe Begriffe vermieden und einfachere Formulierungen verwendet."
+    )
+    st.toggle(
+        "Die Option 'Code anzeigen' anbieten",
+        key="show_code",
+        help="Wenn aktiviert, kann der zugrunde liegende Code für eine Antwort angezeigt werden."
     )
 
     st.header("Datenquelle")
@@ -63,7 +70,7 @@ def display_chat_interface():
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
             if message["role"] == "assistant":
-                if "verbose_output" in message and message["verbose_output"]:
+                if st.session_state.get("show_code", True) and "verbose_output" in message and message["verbose_output"]:
                     with st.expander("🔍 Code anzeigen", expanded=False):
                         st.markdown(f'<div tabindex="0">{message["verbose_output"]}</div>', unsafe_allow_html=True)
                 if "plot" in message and message["plot"]:

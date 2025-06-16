@@ -75,8 +75,9 @@ if agent:
                 if verbose_agent_output:
                     formatted_verbose_output = format_verbose_output(verbose_agent_output, response_content)
                     if formatted_verbose_output:
-                        with st.expander("🔍 Code anzeigen", expanded=False):
-                            st.markdown(f'<div tabindex="0">{formatted_verbose_output}</div>', unsafe_allow_html=True)
+                        if st.session_state.get("show_code", True):
+                            with st.expander("🔍 Code anzeigen", expanded=False):
+                                st.markdown(f'<div tabindex="0">{formatted_verbose_output}</div>', unsafe_allow_html=True)
                         verbose_output_for_this_message = formatted_verbose_output
 
                 if st.session_state.include_visualisations:
