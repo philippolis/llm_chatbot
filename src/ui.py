@@ -29,7 +29,7 @@ def display_chat_interface():
             if message["role"] == "assistant":
                 if st.session_state.get("show_code", True) and "verbose_output" in message and message["verbose_output"]:
                     with st.expander("🔍 Code anzeigen", expanded=False):
-                        st.markdown(f'<div tabindex="0">{message["verbose_output"]}</div>', unsafe_allow_html=True)
+                        st.markdown(message["verbose_output"])
                 if "plot" in message and message["plot"]:
                     st.image(message["plot"])
                 if "content" in message and message["content"]: # Ensure content exists

@@ -34,7 +34,7 @@ def format_verbose_output(verbose_str: str, final_agent_answer_str: str) -> str:
             if query_extract_match:
                 code_to_execute = query_extract_match.group(1).encode('utf-8').decode('unicode_escape', 'ignore')
 
-        formatted_parts.append(f"**Ausgeführter Code:**\n```python\n{code_to_execute.strip()}\n```")
+        formatted_parts.append(f"**Ausgeführter Code:**\n\n```python\n{code_to_execute.strip()}\n```")
         
         end_of_invocation_idx = invocation_match.end()
         text_after_invocation = clean_str[end_of_invocation_idx:]

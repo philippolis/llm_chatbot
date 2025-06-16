@@ -78,7 +78,7 @@ if agent:
                     if formatted_verbose_output:
                         if st.session_state.get("show_code", True):
                             with st.expander("🔍 Code anzeigen", expanded=False):
-                                st.markdown(f'<div tabindex="0">{formatted_verbose_output}</div>', unsafe_allow_html=True)
+                                st.markdown(formatted_verbose_output)
                         verbose_output_for_this_message = formatted_verbose_output
 
                 if st.session_state.include_visualisations:
