@@ -4,7 +4,7 @@ import streamlit as st
 import pandas as pd
 
 from src.state import init_session_state
-from src.ui import display_setup_expander, display_chat_interface
+from src.ui import display_setup_section, display_chat_interface
 from src.utils import format_verbose_output, capture_and_display_plot
 from src.agent import get_agent
 
@@ -26,7 +26,7 @@ if st.session_state.df is None:
 st.title("Chatbot für Datenanalyse")
 
 # --- Main App Logic ---
-display_setup_expander()
+display_setup_section()
 
 display_chat_interface()
 
@@ -75,8 +75,9 @@ if agent:
                 if verbose_agent_output:
                     formatted_verbose_output = format_verbose_output(verbose_agent_output, response_content)
                     if formatted_verbose_output:
-                        with st.expander("🔍 Code anzeigen", expanded=False):
-                            st.markdown(formatted_verbose_output)
+                        st.markdown("---")
+                        st.markdown("### 🔍 Angezeigter Code")
+                        st.markdown(formatted_verbose_output)
                         verbose_output_for_this_message = formatted_verbose_output
 
                 if st.session_state.include_visualisations:

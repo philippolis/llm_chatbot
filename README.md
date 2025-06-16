@@ -39,3 +39,8 @@ Von den 891 Passagieren im Titanic-Datensatz überlebten 342, was einer Überleb
 ## Frage 5: Wie viele männliche Passagiere überlebten?
 **Antwort:**  
 Von den 843 männlichen Passagieren überlebten 161, was einer Überlebensrate von **19 %** entspricht.
+
+# Barrierefreiheits-Todos
+- st.toggle kann nicht durch Tastatur-Navigation bedient werden
+- Werden Chat-Nachrichten durch Screenreader vorgelesen?
+- 
