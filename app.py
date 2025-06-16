@@ -75,9 +75,8 @@ if agent:
                 if verbose_agent_output:
                     formatted_verbose_output = format_verbose_output(verbose_agent_output, response_content)
                     if formatted_verbose_output:
-                        st.markdown("---")
-                        st.markdown("### 🔍 Angezeigter Code")
-                        st.markdown(formatted_verbose_output)
+                        with st.expander("🔍 Code anzeigen", expanded=False):
+                            st.markdown(formatted_verbose_output)
                         verbose_output_for_this_message = formatted_verbose_output
 
                 if st.session_state.include_visualisations:
