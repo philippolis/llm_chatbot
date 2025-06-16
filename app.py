@@ -19,11 +19,12 @@ if st.session_state.df is None:
             default_df = pd.read_csv(titanic_url)
             st.session_state.df = default_df
             st.session_state.data_source_name = "Titanic"
-            st.session_state.data_source_locked = True
     except Exception as e:
         st.error(f"Fehler beim Laden des Titanic-Datensatzes: {e}")
 
 st.title("Chatbot für Datenanalyse")
+st.header("Datensatz")
+st.markdown(f"Aktuell verwendeter Datensatz: **{st.session_state.data_source_name}**")
 
 # --- Main App Logic ---
 display_setup_section()
@@ -38,7 +39,7 @@ if agent:
     if prompt := st.chat_input("Stellen Sie Fragen zu Ihren Daten..."):
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user"):
-            st.markdown(f'<div tabindex="0">{prompt}</div>', unsafe_allow_html=True)
+            st.markdown(prompt)
 
         assistant_response_content = "Entschuldigung, ein Fehler ist aufgetreten und ich konnte nicht antworten."
         plot_bytes_for_this_message = None
@@ -77,14 +78,14 @@ if agent:
                     if formatted_verbose_output:
                         if st.session_state.get("show_code", True):
                             with st.expander("🔍 Code anzeigen", expanded=False):
-                                st.markdown(f'<div tabindex="0">{formatted_verbose_output}</div>', unsafe_allow_html=True)
+                                st.markdown(formatted_verbose_output)
                         verbose_output_for_this_message = formatted_verbose_output
 
                 if st.session_state.include_visualisations:
                     plot_bytes_for_this_message = capture_and_display_plot()
                 
                 if response_content: # Ensure content exists before marking it as "Answer"
-                    st.markdown(f'<div tabindex="0">{response_content}</div>', unsafe_allow_html=True)
+                    st.markdown(response_content)
 
             except Exception as e:
                 sys.stdout = old_stdout # Restore stdout in case of error during agent execution

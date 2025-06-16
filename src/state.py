@@ -14,8 +14,6 @@ def init_session_state():
     # --- Configuration State ---
     if "openai_model" not in st.session_state:
         st.session_state.openai_model = "gpt-4.1-nano"
-    if "data_source_locked" not in st.session_state:
-        st.session_state.data_source_locked = False
         
     # --- Accessibility Options ---
     if "include_visualisations" not in st.session_state:
@@ -26,8 +24,6 @@ def init_session_state():
         st.session_state.show_code = True
 
     # --- UI State ---
-    if 'show_csv_uploader' not in st.session_state:
-        st.session_state.show_csv_uploader = False
     if 'data_source_name' not in st.session_state:
         st.session_state.data_source_name = "Titanic-Datensatz"
 
