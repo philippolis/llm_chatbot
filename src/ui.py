@@ -3,18 +3,13 @@ import pandas as pd
 from src.agent import get_agent
 
 def display_setup_section():
-    # The settings section is now always visible for better accessibility.
     st.header("Barrierefreiheitsoptionen")
-    st.selectbox(
-        "Visualisierungen in Antworten einbeziehen?",
-        (True, False),
-        format_func=lambda x: "Ja" if x else "Nein",
+    st.toggle(
+        "Visualisierungen in Antworten einbeziehen",
         key="include_visualisations"
     )
-    st.selectbox(
-        "Einfache Sprache verwenden?",
-        (True, False),
-        format_func=lambda x: "Ja" if x else "Nein",
+    st.toggle(
+        "Einfache Sprache verwenden",
         key="simple_language"
     )
 
