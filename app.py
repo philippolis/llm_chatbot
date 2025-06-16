@@ -22,9 +22,9 @@ if st.session_state.df is None:
     except Exception as e:
         st.error(f"Fehler beim Laden des Titanic-Datensatzes: {e}")
 
-st.title("Chatbot für Datenanalyse")
-st.header("Datensatz")
-st.markdown(f"Aktuell verwendeter Datensatz: **{st.session_state.data_source_name}**")
+st.markdown('<h1 tabindex="0">Chatbot für Datenanalyse</h1>', unsafe_allow_html=True)
+st.markdown('<h2 tabindex="0">Datensatz</h2>', unsafe_allow_html=True)
+st.markdown(f'<div tabindex="0">Aktuell verwendeter Datensatz: <strong>{st.session_state.data_source_name}</strong></div>', unsafe_allow_html=True)
 
 # --- Main App Logic ---
 display_setup_section()
@@ -39,7 +39,7 @@ if agent:
     if prompt := st.chat_input("Stellen Sie Fragen zu Ihren Daten..."):
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user"):
-            st.markdown(prompt)
+            st.markdown(f'<div tabindex="0">{prompt}</div>', unsafe_allow_html=True)
 
         assistant_response_content = "Entschuldigung, ein Fehler ist aufgetreten und ich konnte nicht antworten."
         plot_bytes_for_this_message = None
@@ -78,14 +78,14 @@ if agent:
                     if formatted_verbose_output:
                         if st.session_state.get("show_code", True):
                             with st.expander("🔍 Code anzeigen", expanded=False):
-                                st.markdown(formatted_verbose_output)
+                                st.markdown(f'<div tabindex="0">{formatted_verbose_output}</div>', unsafe_allow_html=True)
                         verbose_output_for_this_message = formatted_verbose_output
 
                 if st.session_state.include_visualisations:
                     plot_bytes_for_this_message = capture_and_display_plot()
                 
                 if response_content: # Ensure content exists before marking it as "Answer"
-                    st.markdown(response_content)
+                    st.markdown(f'<div tabindex="0">{response_content}</div>', unsafe_allow_html=True)
 
             except Exception as e:
                 sys.stdout = old_stdout # Restore stdout in case of error during agent execution

@@ -3,7 +3,7 @@ import pandas as pd
 from src.agent import get_agent
 
 def display_setup_section():
-    st.header("Barrierefreiheitsoptionen")
+    st.markdown('<h2 tabindex="0">Barrierefreiheitsoptionen</h2>', unsafe_allow_html=True)
     st.toggle(
         "Visualisierungen in Antworten einbeziehen",
         key="include_visualisations",
@@ -20,7 +20,7 @@ def display_setup_section():
         help="Wenn aktiviert, kann der zugrunde liegende Code für eine Antwort angezeigt werden."
     )
 
-    st.header("Chat-Verlauf")
+    st.markdown('<h2 tabindex="0">Chat-Verlauf</h2>', unsafe_allow_html=True)
 
 def display_chat_interface():
     # Display chat messages from history
@@ -29,10 +29,10 @@ def display_chat_interface():
             if message["role"] == "assistant":
                 if st.session_state.get("show_code", True) and "verbose_output" in message and message["verbose_output"]:
                     with st.expander("🔍 Code anzeigen", expanded=False):
-                        st.markdown(message["verbose_output"])
+                        st.markdown(f'<div tabindex="0">{message["verbose_output"]}</div>', unsafe_allow_html=True)
                 if "plot" in message and message["plot"]:
                     st.image(message["plot"])
                 if "content" in message and message["content"]: # Ensure content exists
-                    st.markdown(message["content"])
+                    st.markdown(f'<div tabindex="0">{message["content"]}</div>', unsafe_allow_html=True)
             else: # User message
-                st.markdown(message["content"])
+                st.markdown(f'<div tabindex="0">{message["content"]}</div>', unsafe_allow_html=True)
