@@ -26,6 +26,15 @@ st.markdown('<h1 tabindex="0">Chatbot für Datenanalyse</h1>', unsafe_allow_html
 st.markdown('<h2 tabindex="0">Datensatz</h2>', unsafe_allow_html=True)
 st.markdown(f'<div tabindex="0">Aktuell verwendeter Datensatz: <strong>{st.session_state.data_source_name}</strong></div>', unsafe_allow_html=True)
 
+# Load and display dataset description
+try:
+    # Assuming data_description.txt is in the same directory as app.py
+    with open("data_description.txt", "r", encoding="utf-8") as f:
+        dataset_description = f.read()
+    st.markdown(f'<div tabindex="0" style="text-align: justify;">{dataset_description}</div>', unsafe_allow_html=True)
+except FileNotFoundError:
+    st.warning("Keine Beschreibung für den Datensatz gefunden (data_description.txt nicht gefunden).")
+
 # --- Main App Logic ---
 display_setup_section()
 

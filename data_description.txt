@@ -1,0 +1,1 @@
+Dieser Datensatz enthält demografische und reisebezogene Informationen über die Passagiere der Titanic, die im Jahr 1912 sank. Er wird häufig für Aufgaben der binären Klassifikation verwendet, um vorherzusagen, ob ein Passagier das Unglück überlebt hat oder nicht. 
