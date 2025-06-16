@@ -70,10 +70,10 @@ def display_chat_interface():
             if message["role"] == "assistant":
                 if "verbose_output" in message and message["verbose_output"]:
                     with st.expander("🔍 Code anzeigen", expanded=False):
-                        st.markdown(message["verbose_output"])
+                        st.markdown(f'<div tabindex="0">{message["verbose_output"]}</div>', unsafe_allow_html=True)
                 if "plot" in message and message["plot"]:
                     st.image(message["plot"])
                 if "content" in message and message["content"]: # Ensure content exists
-                    st.markdown(message["content"])
+                    st.markdown(f'<div tabindex="0">{message["content"]}</div>', unsafe_allow_html=True)
             else: # User message
-                st.markdown(message["content"])
+                st.markdown(f'<div tabindex="0">{message["content"]}</div>', unsafe_allow_html=True)

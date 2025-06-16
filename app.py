@@ -38,7 +38,7 @@ if agent:
     if prompt := st.chat_input("Stellen Sie Fragen zu Ihren Daten..."):
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user"):
-            st.markdown(prompt)
+            st.markdown(f'<div tabindex="0">{prompt}</div>', unsafe_allow_html=True)
 
         assistant_response_content = "Entschuldigung, ein Fehler ist aufgetreten und ich konnte nicht antworten."
         plot_bytes_for_this_message = None
@@ -76,14 +76,14 @@ if agent:
                     formatted_verbose_output = format_verbose_output(verbose_agent_output, response_content)
                     if formatted_verbose_output:
                         with st.expander("🔍 Code anzeigen", expanded=False):
-                            st.markdown(formatted_verbose_output)
+                            st.markdown(f'<div tabindex="0">{formatted_verbose_output}</div>', unsafe_allow_html=True)
                         verbose_output_for_this_message = formatted_verbose_output
 
                 if st.session_state.include_visualisations:
                     plot_bytes_for_this_message = capture_and_display_plot()
                 
                 if response_content: # Ensure content exists before marking it as "Answer"
-                    st.markdown(response_content)
+                    st.markdown(f'<div tabindex="0">{response_content}</div>', unsafe_allow_html=True)
 
             except Exception as e:
                 sys.stdout = old_stdout # Restore stdout in case of error during agent execution
