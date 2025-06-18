@@ -5,7 +5,7 @@ import pandas as pd
 
 from src.state import init_session_state
 from src.ui import display_setup_section, display_chat_interface
-from src.utils import format_verbose_output, capture_and_display_plot
+from src.utils import format_verbose_output, capture_and_display_plots
 from src.agent import get_agent
 
 # Initialize session state
@@ -51,7 +51,7 @@ if agent:
             st.markdown(f'<div tabindex="0">{prompt}</div>', unsafe_allow_html=True)
 
         assistant_response_content = "Entschuldigung, ein Fehler ist aufgetreten und ich konnte nicht antworten."
-        plot_bytes_for_this_message = None
+        plots_bytes_for_this_message = []
         verbose_output_for_this_message = None
 
         with st.chat_message("assistant"):
@@ -91,7 +91,7 @@ if agent:
                         verbose_output_for_this_message = formatted_verbose_output
 
                 if st.session_state.include_visualisations:
-                    plot_bytes_for_this_message = capture_and_display_plot()
+                    plots_bytes_for_this_message = capture_and_display_plots()
                 
                 if response_content: # Ensure content exists before marking it as "Answer"
                     st.markdown(f'<div tabindex="0">{response_content}</div>', unsafe_allow_html=True)
@@ -104,8 +104,8 @@ if agent:
         current_assistant_message = {"role": "assistant", "content": assistant_response_content}
         if verbose_output_for_this_message:
             current_assistant_message["verbose_output"] = verbose_output_for_this_message
-        if plot_bytes_for_this_message:
-            current_assistant_message["plot"] = plot_bytes_for_this_message
+        if plots_bytes_for_this_message:
+            current_assistant_message["plots"] = plots_bytes_for_this_message
         st.session_state.messages.append(current_assistant_message)
 else:
     st.info("Bitte konfigurieren Sie die Einstellungen und laden Sie Daten, um den Chatbot zu starten.")

@@ -58,18 +58,23 @@ def format_verbose_output(verbose_str: str, final_agent_answer_str: str) -> str:
 
     return "\n\n".join(formatted_parts)
 
-def capture_and_display_plot():
-    """Captures the current matplotlib plot, displays it in Streamlit,
-    and returns it as bytes for saving in session state."""
+def capture_and_display_plots():
+    """Captures all open matplotlib plots, displays them in Streamlit,
+    and returns them as a list of bytes for saving in session state."""
     with _lock:
-        fig = plt.gcf()
-        if fig and fig.get_axes():
-            img_buffer = io.BytesIO()
-            fig.savefig(img_buffer, format="png")
-            img_buffer.seek(0)
-            plot_bytes = img_buffer.getvalue()
-            st.image(plot_bytes)
-            plt.clf()
-            plt.close(fig)
-            return plot_bytes
-    return None 
+        plot_bytes_list = []
+        fig_nums = plt.get_fignums()
+        if fig_nums:
+            for i, fig_num in enumerate(fig_nums):
+                fig = plt.figure(fig_num)
+                if fig.get_axes():  # Check if there is something to plot
+                    img_buffer = io.BytesIO()
+                    fig.savefig(img_buffer, format="png")
+                    img_buffer.seek(0)
+                    plot_bytes = img_buffer.getvalue()
+                    plot_bytes_list.append(plot_bytes)
+                    
+                    st.image(plot_bytes, use_column_width=True)
+                    plt.close(fig) # Close the figure to free memory
+            return plot_bytes_list
+    return [] 
