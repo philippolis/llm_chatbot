@@ -35,6 +35,15 @@ try:
 except FileNotFoundError:
     st.warning("Keine Beschreibung für den Datensatz gefunden (data_description.txt nicht gefunden).")
 
+if st.session_state.df is not None:
+    st.markdown('<h3 tabindex="0">Vorschau des Datensatzes</h3>', unsafe_allow_html=True)
+    
+    num_rows, num_cols = st.session_state.df.shape
+    st.markdown(f'<div tabindex="0">Anzahl der Zeilen: <strong>{num_rows}</strong></div>', unsafe_allow_html=True)
+    st.markdown(f'<div tabindex="0">Anzahl der Spalten: <strong>{num_cols}</strong></div>', unsafe_allow_html=True)
+
+    st.dataframe(st.session_state.df.head())
+
 # --- Main App Logic ---
 display_setup_section()
 
